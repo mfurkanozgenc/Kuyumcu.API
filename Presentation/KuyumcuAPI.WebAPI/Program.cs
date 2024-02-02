@@ -1,3 +1,7 @@
+using KuyumcuAPI.Applicaion;
+using KuyumcuAPI.Persistance;
+using KuyumcuAPI.Mapper;
+using KuyumcuAPI.Applicaion.Exception;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +11,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var env = builder.Environment;
+builder.Configuration
+    .SetBasePath(env.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+builder.Services.AddPersistance(builder.Configuration);
+builder.Services.AddAplication();
+builder.Services.AddCustomMapper();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder => {
+        builder.WithOrigins("*");
+        builder.WithMethods("*");
+        builder.AllowAnyHeader();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,9 +39,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.ConfigureExceptioHandlingMiddleware();
 app.UseAuthorization();
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();
