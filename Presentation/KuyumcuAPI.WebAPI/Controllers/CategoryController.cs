@@ -5,6 +5,7 @@ using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace KuyumcuAPI.WebAPI.Controllers
 {
@@ -39,7 +40,7 @@ namespace KuyumcuAPI.WebAPI.Controllers
             return BadRequest(result);
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteCategory(int categoryId)
+        public async Task<IActionResult> DeleteCategory([Required] int categoryId)
         {
             var result = await mediator.Send(new DeleteCategoryCommandRequest(categoryId));
             if (result.ErrorCode == Result.Successful)

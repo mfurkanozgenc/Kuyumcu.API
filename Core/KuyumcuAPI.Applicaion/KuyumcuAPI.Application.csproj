@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Commands\ProductCommands\" />
     <Folder Include="Features\Queries\ProductQueries\" />
   </ItemGroup>
 
