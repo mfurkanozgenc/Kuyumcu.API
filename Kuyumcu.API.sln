@@ -9,17 +9,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{7D6C41B7-0EEB-43F2-86CE-BCDF7784B28A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuyumcuAPI.Applicaion", "Core\KuyumcuAPI.Applicaion\KuyumcuAPI.Applicaion.csproj", "{C33F3C45-30DF-4784-A9C0-8E071B63181C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KuyumcuAPI.Application", "Core\KuyumcuAPI.Applicaion\KuyumcuAPI.Application.csproj", "{C33F3C45-30DF-4784-A9C0-8E071B63181C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuyumcuAPI.Domain", "Core\KuyumcuAPI.Domain\KuyumcuAPI.Domain.csproj", "{E9D157A7-9463-4800-BD57-4BDF650771EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KuyumcuAPI.Domain", "Core\KuyumcuAPI.Domain\KuyumcuAPI.Domain.csproj", "{E9D157A7-9463-4800-BD57-4BDF650771EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuyumcuAPI.Mapper", "Core\KuyumcuAPI.Mapper\KuyumcuAPI.Mapper.csproj", "{C48DBFE6-836D-49C3-B8DB-ED1E85234AB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KuyumcuAPI.Mapper", "Core\KuyumcuAPI.Mapper\KuyumcuAPI.Mapper.csproj", "{C48DBFE6-836D-49C3-B8DB-ED1E85234AB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuyumcuAPI.Infrastructure", "Infrastructure\KuyumcuAPI.Infrastructure\KuyumcuAPI.Infrastructure.csproj", "{35EE7CEC-D9DB-4094-A05C-AEAB05B31EAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KuyumcuAPI.Infrastructure", "Infrastructure\KuyumcuAPI.Infrastructure\KuyumcuAPI.Infrastructure.csproj", "{35EE7CEC-D9DB-4094-A05C-AEAB05B31EAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuyumcuAPI.Persistance", "Infrastructure\KuyumcuAPI.Persistance\KuyumcuAPI.Persistance.csproj", "{F92F3062-8D3A-4F23-AB14-7F8596D4C8EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KuyumcuAPI.Persistance", "Infrastructure\KuyumcuAPI.Persistance\KuyumcuAPI.Persistance.csproj", "{F92F3062-8D3A-4F23-AB14-7F8596D4C8EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuyumcuAPI.WebAPI", "Presentation\KuyumcuAPI.WebAPI\KuyumcuAPI.WebAPI.csproj", "{A8AC79DF-F8D0-4784-A09A-05640A018CF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KuyumcuAPI.WebAPI", "Presentation\KuyumcuAPI.WebAPI\KuyumcuAPI.WebAPI.csproj", "{A8AC79DF-F8D0-4784-A09A-05640A018CF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

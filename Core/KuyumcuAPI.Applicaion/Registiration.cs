@@ -1,14 +1,9 @@
-﻿using KuyumcuAPI.Applicaion.Bases;
-using KuyumcuAPI.Applicaion.Exception;
+﻿using KuyumcuAPI.Application.Bases;
+using KuyumcuAPI.Application.Exception;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KuyumcuAPI.Applicaion
+namespace KuyumcuAPI.Application
 {
     public static class Registiration
     {
@@ -17,7 +12,7 @@ namespace KuyumcuAPI.Applicaion
             var assembly = Assembly.GetExecutingAssembly();
             services.AddTransient<ExceptionMiddleware>();
             services.AddRulesFromAssemblyContaining(assembly, typeof(BaseRules));
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly)); ;
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         }
 
         private static IServiceCollection AddRulesFromAssemblyContaining(this IServiceCollection services, Assembly assembly, Type type)

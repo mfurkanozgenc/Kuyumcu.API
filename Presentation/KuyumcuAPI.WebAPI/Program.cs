@@ -1,7 +1,8 @@
-using KuyumcuAPI.Applicaion;
+using KuyumcuAPI.Application;
 using KuyumcuAPI.Persistance;
 using KuyumcuAPI.Mapper;
-using KuyumcuAPI.Applicaion.Exception;
+using KuyumcuAPI.Application.Exception;
+using KuyumcuAPI.Application;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

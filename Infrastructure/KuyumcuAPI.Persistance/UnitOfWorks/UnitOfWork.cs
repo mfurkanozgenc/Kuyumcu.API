@@ -1,5 +1,5 @@
-﻿using KuyumcuAPI.Applicaion.Interfaces.Repositories;
-using KuyumcuAPI.Applicaion.Interfaces.UnitOfWorks;
+﻿using KuyumcuAPI.Application.Interfaces.Repositories;
+using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
 using KuyumcuAPI.Persistance.Context;
 using KuyumcuAPI.Persistance.Repositories;
 using System;

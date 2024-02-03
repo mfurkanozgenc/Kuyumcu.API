@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KuyumcuAPI.Applicaion.Interfaces;
+using KuyumcuAPI.Application.Interfaces;
 using IMapper = AutoMapper.IMapper;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace KuyumcuAPI.Mapper.AutoMapper
 {
-    public class Mapper : Applicaion.Interfaces.AutoMapper.IMapper
+    public class Mapper : Application.Interfaces.AutoMapper.IMapper
     {
         public static List<TypePair> typePairs = new();
         private IMapper MapperContainer;

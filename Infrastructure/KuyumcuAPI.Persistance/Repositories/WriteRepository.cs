@@ -1,4 +1,4 @@
-﻿using KuyumcuAPI.Applicaion.Interfaces.Repositories;
+﻿using KuyumcuAPI.Application.Interfaces.Repositories;
 using KuyumcuAPI.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using System;

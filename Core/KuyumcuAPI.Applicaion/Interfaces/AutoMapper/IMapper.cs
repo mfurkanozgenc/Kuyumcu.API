@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KuyumcuAPI.Applicaion.Interfaces.AutoMapper
+namespace KuyumcuAPI.Application.Interfaces.AutoMapper
 {
     public interface IMapper
     {

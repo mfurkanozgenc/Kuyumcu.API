@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KuyumcuAPI.Application.Bases
+namespace KuyumcuAPI.Domain.Enumarations
 {
-    public abstract class BaseRules
+    public enum Result
     {
-
+        Error,
+        Successful
     }
 }

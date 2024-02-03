@@ -1,4 +1,4 @@
-﻿using KuyumcuAPI.Applicaion.Interfaces.AutoMapper;
+﻿using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

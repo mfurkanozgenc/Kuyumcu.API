@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KuyumcuAPI.Applicaion\KuyumcuAPI.Applicaion.csproj" />
+    <ProjectReference Include="..\KuyumcuAPI.Applicaion\KuyumcuAPI.Application.csproj" />
   </ItemGroup>
 
 </Project>

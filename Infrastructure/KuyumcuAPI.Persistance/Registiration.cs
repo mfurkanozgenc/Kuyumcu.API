@@ -1,7 +1,9 @@
-﻿using KuyumcuAPI.Applicaion.Interfaces.Repositories;
-using KuyumcuAPI.Applicaion.Interfaces.UnitOfWorks;
+﻿using KuyumcuAPI.Application.Interfaces.Repositories;
+using KuyumcuAPI.Application.Interfaces.Services;
+using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
 using KuyumcuAPI.Persistance.Context;
 using KuyumcuAPI.Persistance.Repositories;
+using KuyumcuAPI.Persistance.Services;
 using KuyumcuAPI.Persistance.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +25,7 @@ namespace KuyumcuAPI.Persistance
             services.AddScoped(typeof(IReadRepository<>), typeof(ReadRepository<>));
             services.AddScoped(typeof(IWriteRepository<>), typeof(WriteRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
     }
 }

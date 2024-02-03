@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KuyumcuAPI.Applicaion.Interfaces.Repositories
+namespace KuyumcuAPI.Application.Interfaces.Repositories
 {
     public interface IReadRepository<T> where T : class, IEntityBase
     {
