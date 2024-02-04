@@ -18,7 +18,7 @@ namespace KuyumcuAPI.Persistance.Services
         private readonly IMapper mapper;
         private readonly ReturnResult returnResult;
 
-        public SaleService(IUnitOfWork unitOfWork,IMapper mapper)
+        public SaleService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
@@ -30,8 +30,8 @@ namespace KuyumcuAPI.Persistance.Services
             Decimal productsTotalAmount = 0;
             if (request.CustomerId > 0)
             {
-                customer=await unitOfWork.GetReadRepository<Customer>().GetAsync(c=>c.Id==request.CustomerId);
-                if(customer == null)
+                customer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c => c.Id == request.CustomerId);
+                if (customer == null)
                 {
                     return returnResult.ErrorResponse("Müşteri bulunamadı");
                 }
@@ -48,7 +48,7 @@ namespace KuyumcuAPI.Persistance.Services
             foreach (var saleProduct in request.SalesProducts)
             {
                 var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => p.Id == saleProduct.ProductId);
-                if(product == null)
+                if (product == null)
                 {
                     return returnResult.ErrorResponse("Ürün bulunamadı");
                 }
@@ -69,7 +69,7 @@ namespace KuyumcuAPI.Persistance.Services
                 UserId = user.Id,
                 TotalAmount = request.TotalAmount
             };
-            if(request.AmountReceived>=request.TotalAmount)
+            if (request.AmountReceived >= request.TotalAmount)
             {
                 sale.IsPaid = true;
             }
@@ -79,7 +79,7 @@ namespace KuyumcuAPI.Persistance.Services
             }
             if (customer != null)
             {
-                sale.CustomerId= customer.Id;
+                sale.CustomerId = customer.Id;
             }
             if (productsTotalAmount != request.TotalAmount)
             {
@@ -104,24 +104,26 @@ namespace KuyumcuAPI.Persistance.Services
                 await unitOfWork.GetWriteRepository<ProductSales>().AddAsync(productSales);
                 await unitOfWork.SaveAsync();
             }
-            if(customer!= null)
+            CashTransaction cashTransaction = new()
             {
-                CashTransaction cashTransaction = new()
-                {
-                    Amount = request.AmountReceived,
-                    CustomerId = customer.Id,
-                    UserId = user.Id,
-                    Note = "SATIŞ İŞLEMİ : " + sale.Id
-                };
+                Amount = request.AmountReceived,
+                UserId = user.Id,
+                Note = request.AmountReceived+ "₺ Ödeme alınmıştır",
+                CashTransactionType=CashTransactionType.Sale
+            };
+            if(customer != null) 
+            {
+                cashTransaction.CustomerId = customer.Id;
                 if (request.AmountReceived < request.TotalAmount)
                 {
-                    var differenceAmount=request.TotalAmount - request.AmountReceived;
+                    var differenceAmount = request.TotalAmount - request.AmountReceived;
                     customer.Balance += differenceAmount;
                     await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
+                    await unitOfWork.SaveAsync();
                 }
-                await unitOfWork.GetWriteRepository<CashTransaction>().AddAsync(cashTransaction);
-                await unitOfWork.SaveAsync();
             }
+            await unitOfWork.GetWriteRepository<CashTransaction>().AddAsync(cashTransaction);
+            await unitOfWork.SaveAsync();
             return returnResult.SuccessResponse("Satış işlemi başarılı");
 
         }

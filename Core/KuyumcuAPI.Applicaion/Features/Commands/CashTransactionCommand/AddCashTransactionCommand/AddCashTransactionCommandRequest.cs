@@ -15,6 +15,7 @@ namespace KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.AddCas
         public decimal Amount { get; set; }
         public string? Note { get; set; }
         public int UserId { get; set; }
+        public int? SalesId { get; set; }
         public CashTransactionType CashTransactionType { get; set; }
     }
 }

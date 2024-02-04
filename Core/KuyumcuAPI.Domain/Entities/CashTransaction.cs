@@ -10,6 +10,7 @@ namespace KuyumcuAPI.Domain.Entities
     public class CashTransaction:EntityBase
     {
         public int? CustomerId { get; set; }
+        public Customer? Customer { get; set; }
         public decimal Amount { get; set; }
         public string? Note { get; set; }
         public int UserId { get; set; }
@@ -19,6 +20,7 @@ namespace KuyumcuAPI.Domain.Entities
     public enum CashTransactionType
     {
         Income, // Gelir
-        Expense // Gider
+        Expense, // Gider
+        Sale // Satış
     }
 }

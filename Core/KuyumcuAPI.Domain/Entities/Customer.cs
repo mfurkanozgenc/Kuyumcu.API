@@ -11,5 +11,6 @@ namespace KuyumcuAPI.Domain.Entities
     {
         public decimal Balance { get; set; } //Müşterinin bakiyesi
         public ICollection<Sale>? Sales { get; set; }
+        public ICollection<CashTransaction>? CashTransactions { get; set; }
     }
 }

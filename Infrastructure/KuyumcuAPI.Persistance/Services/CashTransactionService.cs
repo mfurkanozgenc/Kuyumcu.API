@@ -44,6 +44,10 @@ namespace KuyumcuAPI.Persistance.Services
                 return returnResult.ErrorResponse("Kullanıcı bulunamadı");
             }
             var map=mapper.Map<CashTransaction,AddCashTransactionCommandRequest>(request);
+            if(customer == null)
+            {
+                map.CustomerId = null;
+            }
             await unitOfWork.GetWriteRepository<CashTransaction>().AddAsync(map);
             await unitOfWork.SaveAsync();
             if (customer != null)

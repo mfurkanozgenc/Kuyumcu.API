@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace KuyumcuAPI.Domain.Entities
 {
-    public class User:PersonEntity
+    public class User : PersonEntity
     {
-        public Role  Role { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public Role Role { get; set; }
         public ICollection<Sale> Sales { get; set; }
         public ICollection<CashTransaction> CashTransactions { get; set; }
     }
