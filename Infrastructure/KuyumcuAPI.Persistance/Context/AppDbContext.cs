@@ -26,6 +26,12 @@ namespace KuyumcuAPI.Persistance.Context
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Unit> Units { get; set; }
+        public DbSet<Sale>  Sales{ get; set; }
+        public DbSet<SalesProduct>  SalesProducts{ get; set; }
+        public DbSet<ProductSales>  ProductSales{ get; set; }
+        public DbSet<Customer>   Customers{ get; set; }
+        public DbSet<User>   Users{ get; set; }
+        public DbSet<CashTransaction>   CashTransactions{ get; set; }
 
 
 

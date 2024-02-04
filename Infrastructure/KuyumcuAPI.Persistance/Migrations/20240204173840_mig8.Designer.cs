@@ -4,6 +4,7 @@ using KuyumcuAPI.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KuyumcuAPI.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240204173840_mig8")]
+    partial class mig8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,6 +58,8 @@ namespace KuyumcuAPI.Persistance.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("UserId");
 
@@ -474,11 +479,17 @@ namespace KuyumcuAPI.Persistance.Migrations
 
             modelBuilder.Entity("KuyumcuAPI.Domain.Entities.CashTransaction", b =>
                 {
+                    b.HasOne("KuyumcuAPI.Domain.Entities.Customer", "Customer")
+                        .WithMany("CashTransactions")
+                        .HasForeignKey("CustomerId");
+
                     b.HasOne("KuyumcuAPI.Domain.Entities.User", "User")
                         .WithMany("CashTransactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("User");
                 });
@@ -570,6 +581,8 @@ namespace KuyumcuAPI.Persistance.Migrations
 
             modelBuilder.Entity("KuyumcuAPI.Domain.Entities.Customer", b =>
                 {
+                    b.Navigation("CashTransactions");
+
                     b.Navigation("Sales");
                 });
 

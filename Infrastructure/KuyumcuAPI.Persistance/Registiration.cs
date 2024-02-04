@@ -28,6 +28,10 @@ namespace KuyumcuAPI.Persistance
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<IProductTypeService, ProductTypeService>();
+            services.AddScoped<ISaleService, SaleService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ICashTransactionService, CashTransactionService>();
         }
     }
 }
