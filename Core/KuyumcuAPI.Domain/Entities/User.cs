@@ -13,6 +13,7 @@ namespace KuyumcuAPI.Domain.Entities
         public string Password { get; set; }
         public Role Role { get; set; }
         public ICollection<Sale> Sales { get; set; }
+        public string ApiKey { get; set; }
         public ICollection<CashTransaction> CashTransactions { get; set; }
     }
     public enum Role

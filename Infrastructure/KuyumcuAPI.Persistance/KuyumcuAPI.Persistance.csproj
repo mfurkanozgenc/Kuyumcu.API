@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\KuyumcuAPI.Applicaion\KuyumcuAPI.Application.csproj" />
     <ProjectReference Include="..\..\Core\KuyumcuAPI.Domain\KuyumcuAPI.Domain.csproj" />
+    <ProjectReference Include="..\KuyumcuAPI.Infrastructure\KuyumcuAPI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

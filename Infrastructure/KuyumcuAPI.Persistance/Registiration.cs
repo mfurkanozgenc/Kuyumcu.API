@@ -33,6 +33,7 @@ namespace KuyumcuAPI.Persistance
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICashTransactionService, CashTransactionService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
     }
 }

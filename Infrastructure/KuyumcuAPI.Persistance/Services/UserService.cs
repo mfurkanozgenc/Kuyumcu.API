@@ -6,6 +6,7 @@ using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
 using KuyumcuAPI.Domain.ApiResult;
 using KuyumcuAPI.Domain.Entities;
+using KuyumcuAPI.Infrastructure.Cryptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace KuyumcuAPI.Persistance.Services
         }
         public async Task<KuyumcuSystemResult<string>> CreateUser(AddUserCommandRequest request)
         {
+            var apiKey = ApiKey.CreateApiKey();
             var control=await unitOfWork.GetReadRepository<User>().GetAsync(u=>u.IdentificationNumber==request.IdentificationNumber || u.UserName==request.UserName);
             if (control != null)
             {
@@ -50,6 +52,7 @@ namespace KuyumcuAPI.Persistance.Services
                 return returnResult.ErrorResponse("Şifre boş olamaz");
             }
             var map = mapper.Map<User, AddUserCommandRequest>(request);
+            map.ApiKey= apiKey;
             await unitOfWork.GetWriteRepository<User>().AddAsync(map);
             await unitOfWork.SaveAsync();
             return returnResult.ErrorResponse("Kullanıcı eklendi");
