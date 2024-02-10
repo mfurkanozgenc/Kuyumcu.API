@@ -17,8 +17,4 @@
     <ProjectReference Include="..\KuyumcuAPI.Domain\KuyumcuAPI.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Queries\ProductQueries\" />
-  </ItemGroup>
-
 </Project>

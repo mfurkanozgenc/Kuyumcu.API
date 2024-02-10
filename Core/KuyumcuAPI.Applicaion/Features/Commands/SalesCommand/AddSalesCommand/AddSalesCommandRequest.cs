@@ -15,10 +15,12 @@ namespace KuyumcuAPI.Application.Features.Commands.SalesCommand.AddSalesCommand
         public decimal AmountReceived { get; set; }
         public int UserId { get; set; }
         public int CustomerId { get; set; }
+        public decimal Discount { get; set; }
     }
     public class SalesWithProduct
     {
         public int ProductId { get; set; }
+        public decimal Count { get; set; }
         public decimal SalePrice { get; set; }
     }
 }

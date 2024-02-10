@@ -1,6 +1,7 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.CustomerCommands.AddCustomerCommand;
 using KuyumcuAPI.Application.Features.Commands.CustomerCommands.DeleteCustomerCommand;
 using KuyumcuAPI.Application.Features.Commands.CustomerCommands.UpdateCustomerCommand;
+using KuyumcuAPI.Application.Features.Queries.CustomerQueries.GetAllCustomerQuery;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +38,13 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> DeleteCustomer([Required] int customerId)
         {
             var result = await mediator.Send(new DeleteCustomerCommandRequest(customerId));
+            if (result.ErrorCode == Result.Successful) { return Ok(result); }
+            return BadRequest(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllCustomer([Required] int companyId)
+        {
+            var result = await mediator.Send(new GetAllCustomerQueryRequest(companyId));
             if (result.ErrorCode == Result.Successful) { return Ok(result); }
             return BadRequest(result);
         }

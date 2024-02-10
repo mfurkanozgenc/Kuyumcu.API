@@ -2,6 +2,7 @@
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.AddProductCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.DeleteProductCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.UpdateProductCommand;
+using KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductQuery;
 using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
@@ -125,12 +126,6 @@ namespace KuyumcuAPI.Persistance.Services
                 return returnResult.ErrorResponse("Ürün tipi seçilmeli.");
             }
 
-            var unit = await unitOfWork.GetReadRepository<Domain.Entities.Unit>().GetAsync(u => u.Id == request.UnitId);
-            if (unit == null)
-            {
-                return returnResult.ErrorResponse("Ürün birimi bulunamadı.");
-            }
-
             var salesCurrency = await unitOfWork.GetReadRepository<Currency>().GetAsync(c => c.Id == request.SalesCurrency);
             if (salesCurrency == null)
             {
@@ -163,6 +158,18 @@ namespace KuyumcuAPI.Persistance.Services
                 }
             }
             return returnResult.SuccessResponse("Hatasız");
+        }
+
+        public async Task<KuyumcuSystemResult<IList<GetAllProductQueryResponse>>> GetAllProduct(GetAllProductQueryRequest request)
+        {
+            var products = await unitOfWork.GetReadRepository<Product>().GetAllAsync(p => !p.IsDeleted);
+            var map=mapper.Map<GetAllProductQueryResponse,Product>(products);
+            return new()
+            {
+                ErrorCode = Result.Successful,
+                ErrorMessage = "Tüm Ürünler",
+                Value = map
+            };
         }
 
         public class AddOrUpdateRequest

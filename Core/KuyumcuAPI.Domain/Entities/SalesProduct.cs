@@ -12,6 +12,7 @@ namespace KuyumcuAPI.Domain.Entities
         public int ProductId { get; set; }
         public Product Product { get; set; }
         public decimal SalesPrice { get; set; }
+        public decimal Count { get; set; }
         ICollection<ProductSales> SalesProducts { get; set; }
     }
 }

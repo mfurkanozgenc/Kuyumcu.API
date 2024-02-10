@@ -28,5 +28,14 @@ namespace KuyumcuAPI.Domain.ApiResult
                 Value = successMessage
             };
         }
+        public KuyumcuSystemResult<T> ReturnClass<T>(T entity)
+        {
+            return new()
+            {
+                ErrorCode = Result.Successful,
+                ErrorMessage = "Başarılı",
+                Value = entity
+            };
+        }
     }
 }
