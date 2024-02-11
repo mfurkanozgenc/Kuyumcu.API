@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace KuyumcuAPI.Application.Features.Queries.CustomerQueries.GetAllCustomerQuery
 {
-    public class GetAllCustomerQueryCommand : IRequestHandler<GetAllCustomerQueryRequest, KuyumcuSystemResult<IList<GetAllCustomerQueryResponse>>>
+    public class GetAllCustomerQueryHandler : IRequestHandler<GetAllCustomerQueryRequest, KuyumcuSystemResult<IList<GetAllCustomerQueryResponse>>>
     {
         private readonly ICustomerService customerService;
 
-        public GetAllCustomerQueryCommand(ICustomerService customerService)
+        public GetAllCustomerQueryHandler(ICustomerService customerService)
         {
             this.customerService = customerService;
         }

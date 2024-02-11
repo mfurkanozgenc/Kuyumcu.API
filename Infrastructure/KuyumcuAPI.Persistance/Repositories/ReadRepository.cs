@@ -34,9 +34,10 @@ namespace KuyumcuAPI.Persistance.Repositories
 
         public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
-            Table.AsNoTracking();
-            if (predicate is not null) Table.Where(predicate);
-            return await Table.CountAsync();
+            IQueryable<T> quaryable = Table;
+            quaryable.AsNoTracking();
+            if (predicate is not null) quaryable=quaryable.Where(predicate);
+            return await quaryable.CountAsync();
         }
 
 

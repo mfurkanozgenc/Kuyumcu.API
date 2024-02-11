@@ -1,6 +1,8 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.ProductTypeCommands.AddProductTypeCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductTypeCommands.DeleteProductTypeCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductTypeCommands.UpdateProductTypeCommand;
+using KuyumcuAPI.Application.Features.Queries.ProductCategoryQueries.GetAllProductCategoryQuery;
+using KuyumcuAPI.Application.Features.Queries.ProductTypeQueries.GetAllProductTypeQuery;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +39,13 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> DeleteProductType([Required] int productTypeId)
         {
             var result = await mediator.Send(new DeleteProductTypeCommandRequest(productTypeId));
+            if (result.ErrorCode == Result.Successful) { return Ok(result); }
+            return BadRequest(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductType([Required] int companyId)
+        {
+            var result = await mediator.Send(new GetAllProductTypeQueryRequest(companyId));
             if (result.ErrorCode == Result.Successful) { return Ok(result); }
             return BadRequest(result);
         }

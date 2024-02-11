@@ -1,6 +1,7 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.CategoryCommands.AddCategoryCommand;
 using KuyumcuAPI.Application.Features.Commands.CategoryCommands.DeleteCategoryCommand;
 using KuyumcuAPI.Application.Features.Commands.CategoryCommands.UpdateCategoryCommand;
+using KuyumcuAPI.Application.Features.Queries.ProductCategoryQueries.GetAllProductCategoryQuery;
 using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
@@ -38,7 +39,7 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 ErrorCode = Result.Successful,
                 Value = "Başarılı",
-                ErrorMessage = "Kategori eklendi"
+                ErrorMessage = category.Id.ToString()
             };
         }
 
@@ -66,6 +67,23 @@ namespace KuyumcuAPI.Persistance.Services
             };
         }
 
+        public async Task<KuyumcuSystemResult<IList<GetAllProductCategoryQueryResponse>>> GetAllCategory(GetAllProductCategoryQueryRequest request)
+        {
+            var categories = await unitOfWork.GetReadRepository<Category>().GetAllAsync(c => !c.IsDeleted);
+            var map=mapper.Map<GetAllProductCategoryQueryResponse,Category>(categories);
+            foreach (var category in map) 
+            {
+                var productCount = await unitOfWork.GetReadRepository<ProductCategory>().CountAsync(p => p.CategoryId == category.Id);
+                category.ProductCount= productCount;
+            }        
+            return new()
+            {
+                ErrorCode = Result.Successful,
+                ErrorMessage = "Tüm Kategoriler",
+                Value = map
+            };
+        }
+
         public async Task<KuyumcuSystemResult<string>> UpdateCategory(UpdateCategoryCommandRequest request)
         {
             var category = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Id == request.Id);
@@ -85,7 +103,7 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 ErrorCode = Result.Successful,
                 ErrorMessage = "Başarılı",
-                Value = "Kategori güncellendi"
+                Value = category.Id.ToString()
             };
 
         }

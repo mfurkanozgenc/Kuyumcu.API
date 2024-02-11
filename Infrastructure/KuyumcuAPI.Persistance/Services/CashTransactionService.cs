@@ -63,7 +63,7 @@ namespace KuyumcuAPI.Persistance.Services
                 await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
                 await unitOfWork.SaveAsync();
             }
-            return returnResult.SuccessResponse("Kasa işlemi eklendi");
+            return returnResult.SuccessResponse(map.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteCashTransaction(DeleteCashTransactionCommandRequest request)
@@ -137,7 +137,7 @@ namespace KuyumcuAPI.Persistance.Services
                 await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
                 await unitOfWork.SaveAsync();
             }
-            return returnResult.SuccessResponse("Kasa işlemi güncellendi");
+            return returnResult.SuccessResponse(map.Id.ToString());
         }
     }
 }

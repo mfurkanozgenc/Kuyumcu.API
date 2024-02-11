@@ -1,11 +1,13 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.ProductTypeCommands.AddProductTypeCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductTypeCommands.DeleteProductTypeCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductTypeCommands.UpdateProductTypeCommand;
+using KuyumcuAPI.Application.Features.Queries.ProductTypeQueries.GetAllProductTypeQuery;
 using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
 using KuyumcuAPI.Domain.ApiResult;
 using KuyumcuAPI.Domain.Entities;
+using KuyumcuAPI.Domain.Enumarations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +42,7 @@ namespace KuyumcuAPI.Persistance.Services
             var type = mapper.Map<ProductType, AddProductTypeCommandRequest>(request);
             await unitOfWork.GetWriteRepository<ProductType>().AddAsync(type);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse("Ürün tipi eklendi");
+            return returnResult.SuccessResponse(type.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteProductType(DeleteProductTypeCommandRequest request)
@@ -55,6 +57,23 @@ namespace KuyumcuAPI.Persistance.Services
             await unitOfWork.GetWriteRepository<ProductType>().UpdatAsync(productType);
             await unitOfWork.SaveAsync();
             return returnResult.SuccessResponse("Ürün tipi silindi");
+        }
+
+        public async Task<KuyumcuSystemResult<IList<GetAllProductTypeQueryResponse>>> GetAllProductType(GetAllProductTypeQueryRequest request)
+        {
+            var productTypes = await unitOfWork.GetReadRepository<ProductType>().GetAllAsync();
+            var map=mapper.Map<GetAllProductTypeQueryResponse,ProductType>(productTypes);
+            foreach (var productType in map)
+            {
+                var productCount = await unitOfWork.GetReadRepository<Product>().CountAsync(p => p.ProductTypeId == productType.Id);
+                productType.ProductCount = productCount;
+            }
+            return new()
+            {
+                ErrorCode = Result.Successful,
+                ErrorMessage = "Tüm ürün tipleri",
+                Value = map
+            };
         }
 
         public async Task<KuyumcuSystemResult<string>> UpdateProductType(UpdateProductTypeCommandRequest request)
@@ -76,7 +95,7 @@ namespace KuyumcuAPI.Persistance.Services
             var type = mapper.Map<ProductType, UpdateProductTypeCommandRequest>(request);
             await unitOfWork.GetWriteRepository<ProductType>().UpdatAsync(type);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse("Ürün tipi güncellendi");
+            return returnResult.SuccessResponse(type.Id.ToString());
         }
     }
 }

@@ -45,7 +45,7 @@ namespace KuyumcuAPI.Persistance.Services
             var unit = mapper.Map<Domain.Entities.Unit, AddUnitCommandRequest>(request);
             await unitOfWork.GetWriteRepository<Domain.Entities.Unit>().AddAsync(unit);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse("Birim ekleme başarılı");
+            return returnResult.SuccessResponse(unit.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteUnit(DeleteUnitCommandRequest request)
@@ -84,7 +84,7 @@ namespace KuyumcuAPI.Persistance.Services
             var unit = mapper.Map<Domain.Entities.Unit, UpdateUnitCommandRequest>(request);
             await unitOfWork.GetWriteRepository<Domain.Entities.Unit>().UpdatAsync(unit);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse("Birim güncelleme başarılı");
+            return returnResult.SuccessResponse(unit.Id.ToString());
         }
     }
 }

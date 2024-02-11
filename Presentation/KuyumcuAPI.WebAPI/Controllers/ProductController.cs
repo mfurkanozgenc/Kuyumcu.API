@@ -2,7 +2,9 @@
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.DeleteProductCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.UpdateProductCommand;
 using KuyumcuAPI.Application.Features.Queries.CustomerQueries.GetAllCustomerQuery;
+using KuyumcuAPI.Application.Features.Queries.ProductCategoryQueries.GetAllProductCategoryQuery;
 using KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductQuery;
+using KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductWithCategoryQuery;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -46,6 +48,13 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> GetAllProduct([Required] int companyId)
         {
             var result = await mediator.Send(new GetAllProductQueryRequest(companyId));
+            if (result.ErrorCode == Result.Successful) { return Ok(result); }
+            return BadRequest(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductWithCategory([Required] int categoryId)
+        {
+            var result = await mediator.Send(new GetAllProductWithCategoryQueryRequest(categoryId));
             if (result.ErrorCode == Result.Successful) { return Ok(result); }
             return BadRequest(result);
         }

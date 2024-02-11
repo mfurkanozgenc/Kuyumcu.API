@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductQuery
 {
-    public class GetAllProductQueryCommand : IRequestHandler<GetAllProductQueryRequest, KuyumcuSystemResult<IList<GetAllProductQueryResponse>>>
+    public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryRequest, KuyumcuSystemResult<IList<GetAllProductQueryResponse>>>
     {
         private readonly IProductService productService;
 
-        public GetAllProductQueryCommand(IProductService productService)
+        public GetAllProductQueryHandler(IProductService productService)
         {
             this.productService = productService;
         }

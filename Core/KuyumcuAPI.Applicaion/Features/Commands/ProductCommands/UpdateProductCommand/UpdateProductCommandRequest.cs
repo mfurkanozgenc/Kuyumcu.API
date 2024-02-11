@@ -21,7 +21,6 @@ namespace KuyumcuAPI.Application.Features.Commands.ProductCommands.UpdateProduct
         public int ProductTypeId { get; set; }
         public decimal Cost { get; set; } // Burası ön yüzden de gönderilebilir ya da apiden de hesaplanabilir
         public decimal Count { get; set; }
-        public int UnitId { get; set; }
         public List<int> CategoryIds { get; set; }
     }
 }

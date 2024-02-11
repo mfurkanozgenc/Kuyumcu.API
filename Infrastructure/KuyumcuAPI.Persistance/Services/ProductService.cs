@@ -3,6 +3,7 @@ using KuyumcuAPI.Application.Features.Commands.ProductCommands.AddProductCommand
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.DeleteProductCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.UpdateProductCommand;
 using KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductQuery;
+using KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductWithCategoryQuery;
 using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
@@ -10,6 +11,7 @@ using KuyumcuAPI.Domain.ApiResult;
 using KuyumcuAPI.Domain.Entities;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +49,7 @@ namespace KuyumcuAPI.Persistance.Services
             await unitOfWork.GetWriteRepository<Product>().AddAsync(map);
             await unitOfWork.SaveAsync();
 
-            return returnResult.SuccessResponse("Ürün eklendi.");
+            return returnResult.SuccessResponse(product.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> UpdateProduct(UpdateProductCommandRequest request)
@@ -73,7 +75,7 @@ namespace KuyumcuAPI.Persistance.Services
             await unitOfWork.GetWriteRepository<Product>().UpdatAsync(map);
             await unitOfWork.SaveAsync();
 
-            return returnResult.SuccessResponse("Ürün Güncellendi.");
+            return returnResult.SuccessResponse(product.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteProduct(DeleteProductCommandRequest request)
@@ -162,12 +164,73 @@ namespace KuyumcuAPI.Persistance.Services
 
         public async Task<KuyumcuSystemResult<IList<GetAllProductQueryResponse>>> GetAllProduct(GetAllProductQueryRequest request)
         {
-            var products = await unitOfWork.GetReadRepository<Product>().GetAllAsync(p => !p.IsDeleted);
+            var products = await unitOfWork.GetReadRepository<Product>().GetAllAsync(null,t=>t.Include(a=>a.ProductType));
             var map=mapper.Map<GetAllProductQueryResponse,Product>(products);
+            foreach (var product in map)
+            {
+                var productCategoryNames = "";
+                var productCategories = await unitOfWork.GetReadRepository<ProductCategory>().GetAllAsync(c => c.Id == product.Id);
+                foreach (var category in productCategories)
+                {
+                    var findCategory = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Id == category.CategoryId);
+                    if (findCategory != null)
+                    {
+                        productCategoryNames += findCategory.Name+",";
+                    }
+                }
+                if (!string.IsNullOrEmpty(productCategoryNames))
+                {
+                    productCategoryNames = productCategoryNames.Remove(productCategoryNames.Length - 1);
+                }
+                product.ProductCategoryName = productCategoryNames;
+                var productType=products.SingleOrDefault(p=>p.Id== product.Id);
+                product.ProductTypeName = productType.ProductType.Name;
+            }
             return new()
             {
                 ErrorCode = Result.Successful,
                 ErrorMessage = "Tüm Ürünler",
+                Value = map
+            };
+        }
+
+        public async Task<KuyumcuSystemResult<IList<GetAllProductWithCategoryQueryResponse>>> GetAllProductWithCategory(GetAllProductWithCategoryQueryRequest request)
+        {
+            var productCategories = await unitOfWork.GetReadRepository<ProductCategory>().GetAllAsync(pc => !pc.IsDeleted && pc.CategoryId==request.categoryId);
+            IList<Product> products = new List<Product>();
+            foreach (var category in productCategories)
+            {
+                var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => !p.IsDeleted, t => t.Include(a => a.ProductType));
+                if(product != null)
+                {
+                    products.Add(product);
+                }
+            }
+            var map=mapper.Map<GetAllProductWithCategoryQueryResponse, Product>(products);
+            foreach (var product in map)
+            {
+                var productCategoryNames = "";
+                var productCategory = await unitOfWork.GetReadRepository<ProductCategory>().GetAllAsync(c => c.Id == product.Id);
+                foreach (var category in productCategory)
+                {
+                    var findCategory = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Id == category.CategoryId);
+                    if (findCategory != null)
+                    {
+                        productCategoryNames += findCategory.Name + ",";
+                    }
+                }
+                if (!string.IsNullOrEmpty(productCategoryNames))
+                {
+                    productCategoryNames = productCategoryNames.Remove(productCategoryNames.Length - 1);
+                }
+                product.ProductCategoryName = productCategoryNames;
+                var productType = products.SingleOrDefault(p => p.Id == product.Id);
+                product.ProductTypeName = productType.ProductType.Name;
+            }
+            return new()
+            {
+                ErrorCode = Result.Successful,
+                ErrorMessage = "Kategoriye ait ürünler",
                 Value = map
             };
         }

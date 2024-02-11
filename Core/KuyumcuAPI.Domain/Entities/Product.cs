@@ -22,7 +22,5 @@ namespace KuyumcuAPI.Domain.Entities
         public int ProductTypeId { get; set; }
         public ProductType ProductType { get; set; }
         ICollection<ProductCategory> ProductCategories { get; set; }
-        public bool isGram { get; set; } // Ürün gram cinsinden mi satılacak
-        public bool isCount { get; set; } // Ürün adet cinsinden mi satılacak
     }
 }

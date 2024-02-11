@@ -43,7 +43,7 @@ namespace KuyumcuAPI.Persistance.Services
             var map = mapper.Map<Customer, AddCustomerCommandRequest>(request);
             await unitOfWork.GetWriteRepository<Customer>().AddAsync(map);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse("Müşteri eklendi");
+            return returnResult.SuccessResponse(map.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteCustomer(DeleteCustomerCommandRequest request)
@@ -106,7 +106,7 @@ namespace KuyumcuAPI.Persistance.Services
             var map = mapper.Map<Customer, UpdateCustomerCommandRequest>(request);
             await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(map);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse("Müşteri güncellendi");
+            return returnResult.SuccessResponse(map.Id.ToString());
         }
     }
 }

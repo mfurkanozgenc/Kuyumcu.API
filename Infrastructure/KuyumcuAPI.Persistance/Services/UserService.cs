@@ -55,7 +55,7 @@ namespace KuyumcuAPI.Persistance.Services
             map.ApiKey= apiKey;
             await unitOfWork.GetWriteRepository<User>().AddAsync(map);
             await unitOfWork.SaveAsync();
-            return returnResult.ErrorResponse("Kullanıcı eklendi");
+            return returnResult.ErrorResponse(map.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteUser(DeleteUserCommandRequest request)
@@ -103,7 +103,7 @@ namespace KuyumcuAPI.Persistance.Services
             var map = mapper.Map<User, UpdateUserCommandRequest>(request);
             await unitOfWork.GetWriteRepository<User>().UpdatAsync(map);
             await unitOfWork.SaveAsync();
-            return returnResult.ErrorResponse("Kullanıcı güncellendi");
+            return returnResult.ErrorResponse(user.Id.ToString());
         }
     }
 }
