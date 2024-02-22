@@ -31,7 +31,12 @@ namespace KuyumcuAPI.Persistance.Services
         }
         public async Task<KuyumcuSystemResult<string>> CreateCustomer(AddCustomerCommandRequest request)
         {
-            var oldCustomer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c => c.IdentificationNumber == request.IdentificationNumber || c.PhoneNumber == request.PhoneNumber);
+            Customer oldCustomer = null;
+            oldCustomer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c =>  c.PhoneNumber == request.PhoneNumber);
+            if(!string.IsNullOrEmpty(request.IdentificationNumber))
+            {
+                oldCustomer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c => c.IdentificationNumber == request.IdentificationNumber);
+            }
             if (oldCustomer != null)
             {
                 return returnResult.ErrorResponse("Aynı bilgilere ait daha önce müşteri oluşturulmuştur");
