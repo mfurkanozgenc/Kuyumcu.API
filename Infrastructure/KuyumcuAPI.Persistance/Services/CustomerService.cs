@@ -99,7 +99,12 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 return returnResult.ErrorResponse("Müşteri bulunamadı");
             }
-            var oldCustomer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c => (c.IdentificationNumber == request.IdentificationNumber || c.PhoneNumber == request.PhoneNumber) && c.Id != request.Id);
+            Customer oldCustomer = null;
+            oldCustomer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c => (c.PhoneNumber == request.PhoneNumber) && c.Id != request.Id);
+            if (!string.IsNullOrEmpty(request.IdentificationNumber))
+            {
+                oldCustomer = await unitOfWork.GetReadRepository<Customer>().GetAsync(c => c.IdentificationNumber == request.IdentificationNumber && c.Id!=request.Id);
+            }
             if (oldCustomer != null)
             {
                 return returnResult.ErrorResponse("Aynı bilgilere ait daha önce müşteri oluşturulmuştur");
@@ -111,7 +116,7 @@ namespace KuyumcuAPI.Persistance.Services
             var map = mapper.Map<Customer, UpdateCustomerCommandRequest>(request);
             await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(map);
             await unitOfWork.SaveAsync();
-            return returnResult.SuccessResponse(map.Id.ToString());
+            return returnResult.SuccessResponse("Müşteri Güncellendi");
         }
     }
 }
