@@ -135,7 +135,7 @@ namespace KuyumcuAPI.Persistance.Services
                 cashTransaction.CustomerId = customer.Id;
                 if (request.AmountReceived < request.TotalAmount)
                 {
-                    var differenceAmount = request.TotalAmount - request.AmountReceived;
+                    var differenceAmount = (request.TotalAmount - request.AmountReceived - request.Discount);
                     customer.Balance += differenceAmount;
                     await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
                     await unitOfWork.SaveAsync();

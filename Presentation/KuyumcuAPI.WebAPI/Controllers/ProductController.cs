@@ -1,4 +1,5 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.ProductCommands.AddProductCommand;
+using KuyumcuAPI.Application.Features.Commands.ProductCommands.ChangeProductSalesStatusCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.DeleteProductCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.UpdateProductCommand;
 using KuyumcuAPI.Application.Features.Queries.CustomerQueries.GetAllCustomerQuery;
@@ -55,6 +56,13 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> GetAllProductWithCategory([Required] int categoryId)
         {
             var result = await mediator.Send(new GetAllProductWithCategoryQueryRequest(categoryId));
+            if (result.ErrorCode == Result.Successful) { return Ok(result); }
+            return BadRequest(result);
+        }
+        [HttpPatch]
+        public async Task<IActionResult> ChangeProductSalesStatus(ChangeProductSalesStatusCommandRequest request)
+        {
+            var result = await mediator.Send(request);
             if (result.ErrorCode == Result.Successful) { return Ok(result); }
             return BadRequest(result);
         }

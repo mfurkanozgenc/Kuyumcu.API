@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.AddProductCommand;
+using KuyumcuAPI.Application.Features.Commands.ProductCommands.ChangeProductSalesStatusCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.DeleteProductCommand;
 using KuyumcuAPI.Application.Features.Commands.ProductCommands.UpdateProductCommand;
 using KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductQuery;
@@ -34,7 +35,7 @@ namespace KuyumcuAPI.Persistance.Services
         }
         public async Task<KuyumcuSystemResult<string>> CreateProduct(AddProductCommandRequest request)
         {
-            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => p.Name == request.Name || p.Barcode == request.Barcode || p.Code == request.Code);
+            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => p.Name.ToLower() == request.Name.ToLower());
             if (product != null)
             {
                 return returnResult.ErrorResponse("Ürün daha önce kayıt edilmiştir.");
@@ -46,10 +47,22 @@ namespace KuyumcuAPI.Persistance.Services
             }
 
             var map = mapper.Map<Product, AddProductCommandRequest>(request);
+            map.SalesStatus = true;
+            if (map.Count > 0)
+            {
+                map.StockStatus = true;
+            }
             await unitOfWork.GetWriteRepository<Product>().AddAsync(map);
             await unitOfWork.SaveAsync();
 
-            return returnResult.SuccessResponse(product.Id.ToString());
+            ProductCategory productCategory = new ProductCategory()
+            {
+                CategoryId = request.CategoryIds.FirstOrDefault(),
+                ProductId = map.Id
+            };
+            await unitOfWork.GetWriteRepository<ProductCategory>().AddAsync(productCategory);
+            await unitOfWork.SaveAsync();
+            return returnResult.SuccessResponse(map.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> UpdateProduct(UpdateProductCommandRequest request)
@@ -59,7 +72,7 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 return returnResult.ErrorResponse("Ürün bulunamadı.");
             }
-            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => (p.Name == request.Name || p.Barcode == request.Barcode || p.Code == request.Code) && p.Id!=request.Id);
+            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => (p.Name.ToLower() == request.Name.ToLower()) && p.Id!=request.Id);
             if (product != null)
             {
                 return returnResult.ErrorResponse("Ürün daha önce kayıt edilmiştir.");
@@ -72,10 +85,29 @@ namespace KuyumcuAPI.Persistance.Services
             }
 
             var map = mapper.Map<Product, UpdateProductCommandRequest>(request);
+            if (map.Count > 0)
+            {
+                map.StockStatus = true;
+            }
+            map.SalesStatus = oldProduct.SalesStatus;
             await unitOfWork.GetWriteRepository<Product>().UpdatAsync(map);
+            foreach (var id in request.CategoryIds)
+            {
+                var category = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Id == id);
+                if (category != null)
+                {
+                    var productCategory = await unitOfWork.GetReadRepository<ProductCategory>().GetAsync(pc => pc.ProductId == map.Id);
+                    if(productCategory != null)
+                    {
+                        productCategory.CategoryId = id;
+                    }
+                    await unitOfWork.GetWriteRepository<ProductCategory>().UpdatAsync(productCategory);
+                    await unitOfWork.SaveAsync();
+                }
+            }
             await unitOfWork.SaveAsync();
 
-            return returnResult.SuccessResponse(product.Id.ToString());
+            return returnResult.SuccessResponse(map.Id.ToString());
         }
 
         public async Task<KuyumcuSystemResult<string>> DeleteProduct(DeleteProductCommandRequest request)
@@ -113,32 +145,29 @@ namespace KuyumcuAPI.Persistance.Services
                 return returnResult.ErrorResponse("Ürün adı boş olmamalı.");
             }
 
-            if (request.UnitId <= 0)
-            {
-                return returnResult.ErrorResponse("Ürün birimi boş olmamalı.");
-            }
 
-            if (request.PurchaseCurrency <= 0 || request.SalesCurrency <= 0)
-            {
-                return returnResult.ErrorResponse("Alış veya satış para birimi seçilmeli.");
-            }
+
+            //if (request.PurchaseCurrency <= 0 || request.SalesCurrency <= 0)
+            //{
+            //    return returnResult.ErrorResponse("Alış veya satış para birimi seçilmeli.");
+            //}
 
             if (request.ProductTypeId <= 0)
             {
                 return returnResult.ErrorResponse("Ürün tipi seçilmeli.");
             }
 
-            var salesCurrency = await unitOfWork.GetReadRepository<Currency>().GetAsync(c => c.Id == request.SalesCurrency);
-            if (salesCurrency == null)
-            {
-                return returnResult.ErrorResponse("Satış para birimi bulunamadı.");
-            }
+            //var salesCurrency = await unitOfWork.GetReadRepository<Currency>().GetAsync(c => c.Id == request.SalesCurrency);
+            //if (salesCurrency == null)
+            //{
+            //    return returnResult.ErrorResponse("Satış para birimi bulunamadı.");
+            //}
 
-            var purchaseCurrency = await unitOfWork.GetReadRepository<Currency>().GetAsync(c => c.Id == request.PurchaseCurrency);
-            if (purchaseCurrency == null)
-            {
-                return returnResult.ErrorResponse("Alış para birimi bulunamadı.");
-            }
+            //var purchaseCurrency = await unitOfWork.GetReadRepository<Currency>().GetAsync(c => c.Id == request.PurchaseCurrency);
+            //if (purchaseCurrency == null)
+            //{
+            //    return returnResult.ErrorResponse("Alış para birimi bulunamadı.");
+            //}
 
             var productType = await unitOfWork.GetReadRepository<ProductType>().GetAsync(t => t.Id == request.ProductTypeId);
             if (productType == null)
@@ -164,18 +193,19 @@ namespace KuyumcuAPI.Persistance.Services
 
         public async Task<KuyumcuSystemResult<IList<GetAllProductQueryResponse>>> GetAllProduct(GetAllProductQueryRequest request)
         {
-            var products = await unitOfWork.GetReadRepository<Product>().GetAllAsync(null,t=>t.Include(a=>a.ProductType));
+            var products = await unitOfWork.GetReadRepository<Product>().GetAllAsync(p=>!p.IsDeleted,t=>t.Include(a=>a.ProductType));
             var map=mapper.Map<GetAllProductQueryResponse,Product>(products);
             foreach (var product in map)
             {
                 var productCategoryNames = "";
-                var productCategories = await unitOfWork.GetReadRepository<ProductCategory>().GetAllAsync(c => c.Id == product.Id);
+                var productCategories = await unitOfWork.GetReadRepository<ProductCategory>().GetAllAsync(c => c.ProductId == product.Id);
                 foreach (var category in productCategories)
                 {
                     var findCategory = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Id == category.CategoryId);
                     if (findCategory != null)
                     {
                         productCategoryNames += findCategory.Name+",";
+                        product.CategoryId = findCategory.Id;
                     }
                 }
                 if (!string.IsNullOrEmpty(productCategoryNames))
@@ -200,7 +230,7 @@ namespace KuyumcuAPI.Persistance.Services
             IList<Product> products = new List<Product>();
             foreach (var category in productCategories)
             {
-                var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => !p.IsDeleted, t => t.Include(a => a.ProductType));
+                var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => !p.IsDeleted && p.Id==category.ProductId && p.SalesStatus && p.StockStatus, t => t.Include(a => a.ProductType));
                 if(product != null)
                 {
                     products.Add(product);
@@ -233,6 +263,19 @@ namespace KuyumcuAPI.Persistance.Services
                 ErrorMessage = "Kategoriye ait ürünler",
                 Value = map
             };
+        }
+
+        public async Task<KuyumcuSystemResult<string>> ChangeProductSalesStatus(ChangeProductSalesStatusCommandRequest request)
+        {
+            var product=await unitOfWork.GetReadRepository<Product>().GetAsync(p=>p.Id==request.ProductId);
+            if(product == null)
+            {
+                return returnResult.ErrorResponse("Ürün bulunamadı.");
+            }
+            product.SalesStatus=request.SalesStatus;
+            await unitOfWork.GetWriteRepository<Product>().UpdatAsync(product);
+            await unitOfWork.SaveAsync();
+            return returnResult.SuccessResponse("Ürün satış durumu güncellendi");
         }
 
         public class AddOrUpdateRequest

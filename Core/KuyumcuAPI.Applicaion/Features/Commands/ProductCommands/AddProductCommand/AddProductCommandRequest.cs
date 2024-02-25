@@ -11,12 +11,12 @@ namespace KuyumcuAPI.Application.Features.Commands.ProductCommands.AddProductCom
     public class AddProductCommandRequest:IRequest<KuyumcuSystemResult<string>>
     {
         public string Name { get; set; }
-        public string Code { get; set; }
-        public string Barcode { get; set; }
+        public string? Code { get; set; }
+        public string? Barcode { get; set; }
         public decimal PurchasePrice { get; set; }
         public decimal SalesPrice { get; set; }
-        public int PurchaseCurrency { get; set; }
-        public int SalesCurrency { get; set; }
+        public int? PurchaseCurrency { get; set; }
+        public int? SalesCurrency { get; set; }
         public int ProductTypeId { get; set; }
         public decimal Cost { get; set; } // Burası ön yüzden de gönderilebilir ya da apiden de hesaplanabilir
         public decimal Count { get; set; }

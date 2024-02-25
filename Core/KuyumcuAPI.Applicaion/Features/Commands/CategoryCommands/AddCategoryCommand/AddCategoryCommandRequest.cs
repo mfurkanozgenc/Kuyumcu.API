@@ -10,6 +10,6 @@ namespace KuyumcuAPI.Application.Features.Commands.CategoryCommands.AddCategoryC
 {
     public class AddCategoryCommandRequest:IRequest<KuyumcuSystemResult<string>>
     {
-        public required string? Name { get; set; }
+        public required string Name { get; set; }
     }
 }

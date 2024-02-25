@@ -33,13 +33,25 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 Name = request.Name
             };
+
+            var oldControl = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Name.ToLower()==request.Name.ToLower());
+
+            if (oldControl != null)
+            {
+                return new()
+                {
+                    ErrorCode = Result.Error,
+                    ErrorMessage = "Hata",
+                    Value = "Aynı isime ait kategori mevcut"
+                };
+            }
             await unitOfWork.GetWriteRepository<Category>().AddAsync(category);
             await unitOfWork.SaveAsync();
             return new()
             {
                 ErrorCode = Result.Successful,
-                Value = "Başarılı",
-                ErrorMessage = category.Id.ToString()
+                Value = category.Id.ToString(),
+                ErrorMessage = "Başarılı"
             };
         }
 
@@ -94,6 +106,16 @@ namespace KuyumcuAPI.Persistance.Services
                     ErrorCode = Result.Error,
                     ErrorMessage = "Hata",
                     Value = "Kategori bulunamadı"
+                };
+            }
+            var oldControl = await unitOfWork.GetReadRepository<Category>().GetAsync(c => c.Name.ToLower() == request.Name.ToLower() && c.Id!=request.Id);
+            if (oldControl != null)
+            {
+                return new()
+                {
+                    ErrorCode = Result.Error,
+                    ErrorMessage = "Hata",
+                    Value = "Aynı isime ait kategori mevcut"
                 };
             }
             var map = mapper.Map<Category, UpdateCategoryCommandRequest>(request);

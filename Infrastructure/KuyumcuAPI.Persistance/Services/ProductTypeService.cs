@@ -61,7 +61,7 @@ namespace KuyumcuAPI.Persistance.Services
 
         public async Task<KuyumcuSystemResult<IList<GetAllProductTypeQueryResponse>>> GetAllProductType(GetAllProductTypeQueryRequest request)
         {
-            var productTypes = await unitOfWork.GetReadRepository<ProductType>().GetAllAsync();
+            var productTypes = await unitOfWork.GetReadRepository<ProductType>().GetAllAsync(pt=>!pt.IsDeleted);
             var map=mapper.Map<GetAllProductTypeQueryResponse,ProductType>(productTypes);
             foreach (var productType in map)
             {

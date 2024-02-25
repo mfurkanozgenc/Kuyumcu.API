@@ -23,6 +23,8 @@ namespace KuyumcuAPI.Application.Features.Queries.ProductQueries.GetAllProductQu
         public int ProductTypeId { get; set; }
         public string ProductCategoryName { get; set; }
         public string ProductTypeName { get; set; }
+        public bool SalesStatus { get; set; }
+        public int CategoryId { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }
