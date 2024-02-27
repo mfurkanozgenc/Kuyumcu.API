@@ -1,6 +1,7 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.AddCashTransactionCommand;
 using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.DeleteCashTransactionCommand;
 using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.UpdateCashTransactionCommand;
+using KuyumcuAPI.Application.Features.Queries.CashTransactionQueries.GetAllCashTransactionQuery;
 using KuyumcuAPI.Domain.ApiResult;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace KuyumcuAPI.Application.Interfaces.Services
         Task<KuyumcuSystemResult<string>> CreateCashTransaction(AddCashTransactionCommandRequest request);
         Task<KuyumcuSystemResult<string>> UpdateCashTransaction(UpdateCashTransactionCommandRequest request);
         Task<KuyumcuSystemResult<string>> DeleteCashTransaction(DeleteCashTransactionCommandRequest request);
+        Task<KuyumcuSystemResult<IList<GetAllCashTransactionQueryResponse>>> GetAllCashTransactions(GetAllCashTransactionQueryRequest request);
     }
 }

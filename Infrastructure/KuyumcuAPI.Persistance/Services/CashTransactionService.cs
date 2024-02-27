@@ -1,11 +1,13 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.AddCashTransactionCommand;
 using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.DeleteCashTransactionCommand;
 using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.UpdateCashTransactionCommand;
+using KuyumcuAPI.Application.Features.Queries.CashTransactionQueries.GetAllCashTransactionQuery;
 using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
 using KuyumcuAPI.Domain.ApiResult;
 using KuyumcuAPI.Domain.Entities;
+using KuyumcuAPI.Domain.Enumarations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -56,7 +58,7 @@ namespace KuyumcuAPI.Persistance.Services
                 {
                     customer.Balance -= request.Amount;
                 }
-                if (request.CashTransactionType == CashTransactionType.Expense) // MÜşteriye borç versiye verildi
+                if (request.CashTransactionType == CashTransactionType.Expense) // Müşteriye borç versiye verildi
                 {
                     customer.Balance += request.Amount;
                 }
@@ -92,6 +94,32 @@ namespace KuyumcuAPI.Persistance.Services
                 await unitOfWork.SaveAsync();
             }
             return returnResult.SuccessResponse("Kasa işlemi silindi");
+        }
+
+        public async Task<KuyumcuSystemResult<IList<GetAllCashTransactionQueryResponse>>> GetAllCashTransactions(GetAllCashTransactionQueryRequest request)
+        {
+            var cashTransactions = await unitOfWork.GetReadRepository<CashTransaction>().GetAllAsync(c => !c.IsDeleted,t=>t.Include(s=>s.User));
+            List<GetAllCashTransactionQueryResponse> getAllCashTransactionQueryResponse = new List<GetAllCashTransactionQueryResponse>();
+            foreach (var cashTransaction in cashTransactions)
+            {
+                var map = mapper.Map<GetAllCashTransactionQueryResponse, CashTransaction>(cashTransaction);
+                map.UserName = cashTransaction?.User?.FirstName + " " + cashTransaction?.User?.LastName;
+                if(cashTransaction.CustomerId!=null && cashTransaction.CustomerId>0)
+                {
+                    var customer= await unitOfWork.GetReadRepository<Customer>().GetAsync(c => c.Id == cashTransaction.CustomerId);
+                    if (customer != null)
+                    {
+                        map.CustomerName = customer.FirstName + " " + customer.LastName;
+                    }
+                }
+                getAllCashTransactionQueryResponse.Add(map);
+            }
+            return new()
+            {
+                ErrorCode=Result.Successful,
+                ErrorMessage="Tüm Kasa İşlemleri",
+                Value=getAllCashTransactionQueryResponse
+            };
         }
 
         public async Task<KuyumcuSystemResult<string>> UpdateCashTransaction(UpdateCashTransactionCommandRequest request)

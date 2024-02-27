@@ -2,6 +2,7 @@
 using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.DeleteCashTransactionCommand;
 using KuyumcuAPI.Application.Features.Commands.CashTransactionCommand.UpdateCashTransactionCommand;
 using KuyumcuAPI.Application.Features.Commands.CategoryCommands.AddCategoryCommand;
+using KuyumcuAPI.Application.Features.Queries.CashTransactionQueries.GetAllCashTransactionQuery;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -44,6 +45,16 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> DeleteCashTransaction([Required] int cashTransactionId)
         {
             var result = await mediator.Send(new DeleteCashTransactionCommandRequest(cashTransactionId));
+            if (result.ErrorCode == Result.Successful)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllCashTransactions()
+        {
+            var result = await mediator.Send(new GetAllCashTransactionQueryRequest());
             if (result.ErrorCode == Result.Successful)
             {
                 return Ok(result);

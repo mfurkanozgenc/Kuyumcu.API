@@ -127,15 +127,24 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 Amount = request.AmountReceived,
                 UserId = user.Id,
-                Note = request.AmountReceived+ "₺ Ödeme alınmıştır",
+                Note = "",
                 CashTransactionType=CashTransactionType.Sale
             };
+            if (customer==null)
+            {
+                cashTransaction.Note = request.AmountReceived + " ₺ ödeme alınmıştır";
+
+            }
             if(customer != null) 
             {
                 cashTransaction.CustomerId = customer.Id;
                 if (request.AmountReceived < request.TotalAmount)
                 {
                     var differenceAmount = (request.TotalAmount - request.AmountReceived - request.Discount);
+                    if(differenceAmount > 0)
+                    {
+                        cashTransaction.Note = "Müşteri hesabına " + differenceAmount + " ₺ yansıtılmıştır.";
+                    }
                     customer.Balance += differenceAmount;
                     await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
                     await unitOfWork.SaveAsync();
