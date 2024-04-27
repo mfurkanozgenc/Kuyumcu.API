@@ -35,7 +35,7 @@ namespace KuyumcuAPI.Persistance.Services
         }
         public async Task<KuyumcuSystemResult<string>> CreateProduct(AddProductCommandRequest request)
         {
-            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => p.Name.ToLower() == request.Name.ToLower());
+            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => p.Name.ToLower() == request.Name.ToLower() && !p.IsDeleted);
             if (product != null)
             {
                 return returnResult.ErrorResponse("Ürün daha önce kayıt edilmiştir.");
@@ -72,7 +72,7 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 return returnResult.ErrorResponse("Ürün bulunamadı.");
             }
-            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => (p.Name.ToLower() == request.Name.ToLower()) && p.Id!=request.Id);
+            var product = await unitOfWork.GetReadRepository<Product>().GetAsync(p => (p.Name.ToLower() == request.Name.ToLower()) && p.Id!=request.Id && !p.IsDeleted);
             if (product != null)
             {
                 return returnResult.ErrorResponse("Ürün daha önce kayıt edilmiştir.");
@@ -89,7 +89,7 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 map.StockStatus = true;
             }
-            map.SalesStatus = oldProduct.SalesStatus;
+
             await unitOfWork.GetWriteRepository<Product>().UpdatAsync(map);
             foreach (var id in request.CategoryIds)
             {

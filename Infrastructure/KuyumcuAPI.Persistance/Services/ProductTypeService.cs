@@ -30,14 +30,14 @@ namespace KuyumcuAPI.Persistance.Services
         }
         public async Task<KuyumcuSystemResult<string>> CreateProductType(AddProductTypeCommandRequest request)
         {
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                return returnResult.ErrorResponse("Ürün tipi ismi boş olamaz");
+            }
             var oldType = await unitOfWork.GetReadRepository<ProductType>().GetAsync(t => t.Name.ToLower() == request.Name.ToLower() && !t.IsDeleted);
             if(oldType != null)
             {
                 return returnResult.ErrorResponse("Aynı isimde kayıt daha önce mevcut");
-            }
-            if (string.IsNullOrEmpty(request.Name))
-            {
-                return returnResult.ErrorResponse("Ürün tipi ismi boş olamaz");
             }
             var type = mapper.Map<ProductType, AddProductTypeCommandRequest>(request);
             await unitOfWork.GetWriteRepository<ProductType>().AddAsync(type);

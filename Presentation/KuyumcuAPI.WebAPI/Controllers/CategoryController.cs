@@ -5,12 +5,14 @@ using KuyumcuAPI.Application.Features.Queries.CustomerQueries.GetAllCustomerQuer
 using KuyumcuAPI.Application.Features.Queries.ProductCategoryQueries.GetAllProductCategoryQuery;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace KuyumcuAPI.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -25,41 +27,25 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> CreateCategory(AddCategoryCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory([Required] int categoryId)
         {
             var result = await mediator.Send(new DeleteCategoryCommandRequest(categoryId));
-            if (result.ErrorCode == Result.Successful)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCategory([Required] int companyId)
         {
             var result = await mediator.Send(new GetAllProductCategoryQueryRequest(companyId));
-            if (result.ErrorCode == Result.Successful)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            return Ok(result);
         }
     }
 }

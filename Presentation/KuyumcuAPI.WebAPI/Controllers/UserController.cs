@@ -2,6 +2,7 @@
 using KuyumcuAPI.Application.Features.Commands.UserCommands.AddUserCommand;
 using KuyumcuAPI.Application.Features.Commands.UserCommands.DeleteUserCommand;
 using KuyumcuAPI.Application.Features.Commands.UserCommands.UpdateUserCommand;
+using KuyumcuAPI.Application.Features.Queries.UserQueries.GetAllUserQuery;
 using KuyumcuAPI.Domain.Enumarations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +40,13 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> DeleteUser([Required] int userId)
         {
             var result = await mediator.Send(new DeleteUserCommandRequest(userId));
+            if (result.ErrorCode == Result.Successful) { return Ok(result); }
+            return BadRequest(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var result = await mediator.Send(new GetAllUserQueryRequest());
             if (result.ErrorCode == Result.Successful) { return Ok(result); }
             return BadRequest(result);
         }

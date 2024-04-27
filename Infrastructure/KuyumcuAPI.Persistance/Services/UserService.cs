@@ -1,11 +1,13 @@
 ﻿using KuyumcuAPI.Application.Features.Commands.UserCommands.AddUserCommand;
 using KuyumcuAPI.Application.Features.Commands.UserCommands.DeleteUserCommand;
 using KuyumcuAPI.Application.Features.Commands.UserCommands.UpdateUserCommand;
+using KuyumcuAPI.Application.Features.Queries.UserQueries.GetAllUserQuery;
 using KuyumcuAPI.Application.Interfaces.AutoMapper;
 using KuyumcuAPI.Application.Interfaces.Services;
 using KuyumcuAPI.Application.Interfaces.UnitOfWorks;
 using KuyumcuAPI.Domain.ApiResult;
 using KuyumcuAPI.Domain.Entities;
+using KuyumcuAPI.Domain.Enumarations;
 using KuyumcuAPI.Infrastructure.Cryptions;
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,7 @@ namespace KuyumcuAPI.Persistance.Services
         public async Task<KuyumcuSystemResult<string>> CreateUser(AddUserCommandRequest request)
         {
             var apiKey = ApiKey.CreateApiKey();
-            var control=await unitOfWork.GetReadRepository<User>().GetAsync(u=>u.IdentificationNumber==request.IdentificationNumber || u.UserName==request.UserName);
+            var control=await unitOfWork.GetReadRepository<User>().GetAsync(u=>(u.IdentificationNumber==request.IdentificationNumber || u.UserName==request.UserName ) && !u.IsDeleted);
             if (control != null)
             {
                 return returnResult.ErrorResponse("Kullanıcı daha önce kayıt edilmiştir");
@@ -72,6 +74,20 @@ namespace KuyumcuAPI.Persistance.Services
             return returnResult.ErrorResponse("Kullanıcı silindi");
         }
 
+        public async Task<KuyumcuSystemResult<IList<GetAllUserQueryResponse>>> GetAllUser(GetAllUserQueryRequest request)
+        {
+            var allUser = await unitOfWork.GetReadRepository<User>().GetAllAsync(u => !u.IsDeleted);
+
+            var map = mapper.Map<GetAllUserQueryResponse,User>(allUser);
+
+            return new()
+            {
+                ErrorCode=Result.Successful,
+                Value = map,
+                ErrorMessage="Tüm kullanıcılar"
+            };
+        }
+
         public async Task<KuyumcuSystemResult<string>> UpdateUser(UpdateUserCommandRequest request)
         {
             var user = await unitOfWork.GetReadRepository<User>().GetAsync(u => u.Id == request.Id);
@@ -79,7 +95,8 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 return returnResult.ErrorResponse("Kullanıcı bulunamadı");
             }
-            var control = await unitOfWork.GetReadRepository<User>().GetAsync(u => (u.IdentificationNumber == request.IdentificationNumber || u.UserName == request.UserName) && u.Id!=request.Id);
+            var control = await unitOfWork.GetReadRepository<User>().GetAsync(u => (u.IdentificationNumber == request.IdentificationNumber || u.UserName == request.UserName) && u.Id!=request.Id && 
+            !u.IsDeleted);
             if (control != null)
             {
                 return returnResult.ErrorResponse("Kullanıcı daha önce kayıt edilmiştir");

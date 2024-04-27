@@ -6,9 +6,13 @@ using KuyumcuAPI.Domain.ApiResult;
 using KuyumcuAPI.Domain.Entities;
 using KuyumcuAPI.Domain.Enumarations;
 using KuyumcuAPI.Infrastructure.Cryptions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,16 +22,18 @@ namespace KuyumcuAPI.Persistance.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public AuthService(IUnitOfWork unitOfWork,IMapper mapper)
+        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.configuration = configuration;
         }
         public async Task<KuyumcuSystemResult<LoginAuthCommandResponse>> Login(LoginAuthCommandRequest request)
         {
-            var user=await unitOfWork.GetReadRepository<User>().GetAsync(u=>u.UserName == request.UserName && u.Password==request.Password && !u.IsDeleted);
-            if(user == null)
+            var user = await unitOfWork.GetReadRepository<User>().GetAsync(u => u.UserName == request.UserName && u.Password == request.Password && !u.IsDeleted);
+            if (user == null)
             {
                 return new()
                 {
@@ -36,13 +42,7 @@ namespace KuyumcuAPI.Persistance.Services
                     Value = null
                 };
             }
-            if (string.IsNullOrEmpty(user.ApiKey))
-            {
-                var apiKey = ApiKey.CreateApiKey();
-                user.ApiKey = apiKey;
-                await unitOfWork.GetWriteRepository<User>().UpdatAsync(user);
-                await unitOfWork.SaveAsync();
-            }
+            user.ApiKey = GenerateJwtToken(user);
             var mapUser = mapper.Map<LoginAuthCommandResponse, User>(user);
             return new()
             {
@@ -50,6 +50,26 @@ namespace KuyumcuAPI.Persistance.Services
                 ErrorMessage = "Giriş başarılı",
                 Value = mapUser
             };
+        }
+        public string GenerateJwtToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(configuration.GetSection("AppSettings:Secret").Value);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.FullName)
+                }),
+                Expires = DateTime.Now.AddMinutes(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
         }
     }
 }

@@ -125,7 +125,7 @@ namespace KuyumcuAPI.Persistance.Services
             }
             CashTransaction cashTransaction = new()
             {
-                Amount = request.AmountReceived,
+                Amount = request.TotalAmount - request.Discount,
                 UserId = user.Id,
                 Note = "",
                 CashTransactionType=CashTransactionType.Sale

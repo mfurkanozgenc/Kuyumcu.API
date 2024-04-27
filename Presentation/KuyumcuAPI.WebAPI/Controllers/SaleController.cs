@@ -20,8 +20,7 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> CreateSales(AddSalesCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
     }
 }

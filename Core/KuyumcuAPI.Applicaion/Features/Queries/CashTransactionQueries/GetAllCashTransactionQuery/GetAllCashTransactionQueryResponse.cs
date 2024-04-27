@@ -9,7 +9,9 @@ namespace KuyumcuAPI.Application.Features.Queries.CashTransactionQueries.GetAllC
 {
     public class GetAllCashTransactionQueryResponse
     {
+        public int Id { get; set; }
         public string CustomerName { get; set; }
+        public int CustomerId { get; set; }
         public decimal Amount { get; set; }
         public string Note { get; set; }
         public string UserName { get; set; }

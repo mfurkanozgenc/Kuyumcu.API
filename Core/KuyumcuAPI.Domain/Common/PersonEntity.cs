@@ -8,12 +8,13 @@ namespace KuyumcuAPI.Domain.Common
 {
     public class PersonEntity:EntityBase
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FullName { get { return FirstName +" "+ LastName; } }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? IdentificationNumber { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
     }
     public enum Gender
     {

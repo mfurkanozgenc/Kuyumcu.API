@@ -28,43 +28,37 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> CreateProduct(AddProductCommandRequest request)
         {
             var result=await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateProduct(UpdateProductCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteProduct([Required] int productId)
         {
             var result = await mediator.Send(new DeleteProductCommandRequest(productId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllProduct([Required] int companyId)
         {
             var result = await mediator.Send(new GetAllProductQueryRequest(companyId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllProductWithCategory([Required] int categoryId)
         {
             var result = await mediator.Send(new GetAllProductWithCategoryQueryRequest(categoryId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPatch]
         public async Task<IActionResult> ChangeProductSalesStatus(ChangeProductSalesStatusCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
     }
 }

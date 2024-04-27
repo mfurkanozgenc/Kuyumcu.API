@@ -56,11 +56,11 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 if (request.CashTransactionType == CashTransactionType.Income) // Müşteri borcunuda bir kısım ödedi
                 {
-                    customer.Balance -= request.Amount;
+                    customer.Balance -= request.Amount.Value;
                 }
                 if (request.CashTransactionType == CashTransactionType.Expense) // Müşteriye borç versiye verildi
                 {
-                    customer.Balance += request.Amount;
+                    customer.Balance += request.Amount.Value;
                 }
                 await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
                 await unitOfWork.SaveAsync();
@@ -86,7 +86,7 @@ namespace KuyumcuAPI.Persistance.Services
                 {
                     customer.Balance -= cashTransaction.Amount;
                 }
-                if (cashTransaction.CashTransactionType == CashTransactionType.Expense) // MÜşteriye borç versiye verildi
+                if (cashTransaction.CashTransactionType == CashTransactionType.Expense) // Müşteriye borç versiye verildi
                 {
                     customer.Balance += cashTransaction.Amount;
                 }
@@ -110,10 +110,13 @@ namespace KuyumcuAPI.Persistance.Services
                     if (customer != null)
                     {
                         map.CustomerName = customer.FirstName + " " + customer.LastName;
+                        map.CustomerId = customer.Id;
                     }
                 }
                 getAllCashTransactionQueryResponse.Add(map);
+
             }
+            getAllCashTransactionQueryResponse = getAllCashTransactionQueryResponse.OrderByDescending(c => c.CreatedDate).ToList();
             return new()
             {
                 ErrorCode=Result.Successful,
@@ -142,10 +145,10 @@ namespace KuyumcuAPI.Persistance.Services
             {
                 return returnResult.ErrorResponse("Kullanıcı bulunamadı");
             }
-            if (cashTransaction.CustomerId != request.CustomerId)
-            {
-                return returnResult.ErrorResponse("Müşteri değiştriilmez");
-            }
+            //if (cashTransaction.CustomerId != request.CustomerId)
+            //{
+            //    return returnResult.ErrorResponse("Müşteri değiştriilmez");
+            //}
             var oldCashtTransaction = cashTransaction;
             var map = mapper.Map<CashTransaction, UpdateCashTransactionCommandRequest>(request);
             await unitOfWork.GetWriteRepository<CashTransaction>().UpdatAsync(map);
@@ -156,11 +159,11 @@ namespace KuyumcuAPI.Persistance.Services
                 customer.Balance -= oldCashtTransaction.Amount;
                 if (cashTransaction.CashTransactionType == CashTransactionType.Income) // Müşteri borcunuda bir kısım ödedi
                 {
-                    customer.Balance -= request.Amount;
+                    customer.Balance -= request.Amount.Value;
                 }
                 if (cashTransaction.CashTransactionType == CashTransactionType.Expense) // MÜşteriye borç versiye verildi
                 {
-                    customer.Balance += request.Amount;
+                    customer.Balance += request.Amount.Value;
                 }
                 await unitOfWork.GetWriteRepository<Customer>().UpdatAsync(customer);
                 await unitOfWork.SaveAsync();

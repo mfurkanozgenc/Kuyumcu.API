@@ -24,29 +24,25 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> CreateCustomer(AddCustomerCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateCustomer(UpdateCustomerCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteCustomer([Required] int customerId)
         {
             var result = await mediator.Send(new DeleteCustomerCommandRequest(customerId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCustomer([Required] int companyId)
         {
             var result = await mediator.Send(new GetAllCustomerQueryRequest(companyId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
     }
 }

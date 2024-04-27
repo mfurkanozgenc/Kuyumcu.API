@@ -25,29 +25,25 @@ namespace KuyumcuAPI.WebAPI.Controllers
         public async Task<IActionResult> CreateProductType(AddProductTypeCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateProductType(UpdateProductTypeCommandRequest request)
         {
             var result = await mediator.Send(request);
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteProductType([Required] int productTypeId)
         {
             var result = await mediator.Send(new DeleteProductTypeCommandRequest(productTypeId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllProductType([Required] int companyId)
         {
             var result = await mediator.Send(new GetAllProductTypeQueryRequest(companyId));
-            if (result.ErrorCode == Result.Successful) { return Ok(result); }
-            return BadRequest(result);
+            return Ok(result);
         }
     }
 }
